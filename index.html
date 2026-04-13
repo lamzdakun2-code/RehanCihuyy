@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QUANTROX SYSTEM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: #050505;
+            color: #c0c0c0;
+            min-height: 100vh;
+            padding: 15px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(transparent 0px, rgba(0,0,0,0.4) 1px, transparent 2px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 32px;
+            color: #ff003c;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px #ff003c;
+        }
+
+        .login-sub {
+            color: #888;
+            margin-bottom: 40px;
+        }
+
+        .input-login {
+            width: 100%;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .btn-start {
+            width: 100%;
+            background: linear-gradient(45deg, #ff003c, #8b0029);
+            border: none;
+            border-radius: 10px;
+            padding: 18px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 0 25px rgba(255, 0, 60, 0.4);
+            cursor: pointer;
+        }
+
+        /* --- ANIMASI LOADING --- */
+        #loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .anime-battle {
+            width: 90%;
+            height: 300px;
+            background: url('https://i.ibb.co/0yQZf8N/banner.jpg') center/cover;
+            border-radius: 20px;
+            border: 2px solid #ff003c;
+            margin-bottom: 30px;
+            animation: battle-effect 1s infinite alternate;
+        }
+
+        @keyframes battle-effect {
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.02); filter: brightness(1.3); }
+        }
+
+        .loading-text {
+            font-size: 24px;
+            color: #fff;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* --- MAIN MENU --- */
+        #main-menu {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .app-name {
+            font-size: 28px;
+            color: #fff;
+            letter-spacing: 3px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #111;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid #222;
+            margin-bottom: 25px;
+        }
+
+        .status-online {
+            color: #2ed573;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #2ed573;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px #2ed573; }
+            50% { box-shadow: 0 0 15px #2ed573; }
+            100% { box-shadow: 0 0 5px #2ed573; }
+        }
+
+        /* --- TOMBOL MENU UTAMA --- */
+        .main-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .menu-btn {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .menu-btn.active {
+            border-color: #ff003c;
+            background: rgba(255, 0, 60, 0.1);
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
+        }
+
+        .menu-btn .icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .menu-btn span {
+            font-size: 12px;
+            color: #ddd;
+        }
+
+        .menu-btn.comingsoon {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* --- CONTENT AREA --- */
+        .content-box {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .label {
+            color: #aaa;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .input-target {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .mode-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mode-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mode-name {
+            color: #ddd;
+        }
+
+        .mode-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff003c;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .mode-check.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-execute {
+            width: 100%;
+            background: #ff003c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+            margin-top: 30px;
+        }
+
+        /* STYLE KHUSUS SENDER */
+        .qr-box {
+            width: 100%;
+            height: 200px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .qr-box img { width: 150px; height: 150px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1. LAYAR LOGIN -->
+    <div id="login-screen">
+        <h1 class="login-title">QUANTROX SYSTEM</h1>
+        <p class="login-sub">Secure Connection Established</p>
+
+        <input type="text" id="user" class="input-login" placeholder="Username">
+        <input type="password" id="pass" class="input-login" placeholder="Password">
+
+        <button class="btn-start" onclick="login()">🔌 MASUK & MULAI</button>
+    </div>
+
+    <!-- 2. LAYAR LOADING / ANIME BATTLE -->
+    <div id="loading-screen">
+        <div class="anime-battle"></div>
+        <p class="loading-text">INITIALIZING SYSTEM...</p>
+    </div>
+
+    <!-- 3. MENU UTAMA -->
+    <div id="main-menu">
+        <div class="header">
+            <h1 class="app-name">CORE PANEL</h1>
+            <p style="color:#888;">User Access Panel</p>
+        </div>
+
+        <!-- STATUS ONLINE -->
+        <div class="status-bar">
+            <div class="status-online">
+                <span class="status-dot"></span>
+                Online: <strong>80</strong>
+            </div>
+            <div style="color:#aaa;">Server: Connected</div>
+        </div>
+
+        <!-- 5 TOMBOL MENU -->
+        <div class="main-buttons">
+            <div class="menu-btn active" onclick="showContent('home')">
+                <div class="icon">🏠</div>
+                <span>Home</span>
+            </div>
+            <div class="menu-btn" onclick="showContent('bug')">
+                <div class="icon">💥</div>
+                <span>Bug System</span>
+            </div>
+            <div class="menu-btn" onclick="showContent('sender')">
+                <div class="icon">🔗</div>
+                <span>Sender</span>
+            </div>
+            <div class="menu-btn comingsoon">
+                <div class="icon">🔜</div>
+                <span>Coming Soon</span>
+            </div>
+            <div class="menu-btn comingsoon">
+                <div class="icon">🔜</div>
+                <span>Coming Soon</span>
+            </div>
+        </div>
+
+        <!-- AREA KONTEN -->
+        <div id="content-area">
+            <!-- Default Content -->
+            <div class="content-box">
+                <h3 style="color:#fff; margin-bottom:15px;">Selamat Datang!</h3>
+                <p style="color:#aaa;">Sistem aman dan siap digunakan.</p>
+                <br>
+                <p style="color:#2ed573;">✅ Anti-Ban System Active</p>
+                <p style="color:#2ed573;">✅ Invisible Mode Ready</p>
+                <p style="color:#2ed573;">✅ Sender Link Ready</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            © 2025 QUANTROX DEV | OWNER BY REHAN
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // DATA LOGIN
+    const validUser = "RehanBjirAmat";
+    const validPass = "rehan12345678899";
+
+    let selectedMode = "";
+    let bugText = "";
+
+    function login() {
+        let u = document.getElementById('user').value;
+        let p = document.getElementById('pass').value;
+
+        if(u == validUser && p == validPass) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'flex';
+
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-menu').style.display = 'block';
+            }, 3000);
+
+        } else {
+            alert("❌ ACCESS DENIED!\nUsername atau Password Salah!");
+        }
+    }
+
+    function showContent(type) {
+        let area = document.getElementById('content-area');
+        document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+
+        if(type == 'home') {
+            document.querySelectorAll('.menu-btn')[0].classList.add('active');
+            area.innerHTML = `
+                <div class="content-box">
+                    <h3 style="color:#fff; margin-bottom:15px;">Selamat Datang!</h3>
+                    <p style="color:#aaa;">Sistem aman dan siap digunakan.</p>
+                    <br>
+                    <p style="color:#2ed573;">✅ Anti-Ban System Active</p>
+                    <p style="color:#2ed573;">✅ Invisible Mode Ready</p>
+                    <p style="color:#2ed573;">✅ Sender Link Ready</p>
+                </div>
+            `;
+        }
+
+        if(type == 'bug') {
+            document.querySelectorAll('.menu-btn')[1].classList.add('active');
+            area.innerHTML = `
+                <div class="content-box">
+                    <label class="label">📱 NOMOR TARGET</label>
+                    <input type="text" id="nomor" class="input-target" placeholder="Contoh: 628xxxxxxxxxx" value="628">
+
+                    <label class="label">⚙️ PILIH MODE BUG</label>
+                    <div class="mode-list">
+                        <div class="mode-item" onclick="selectMode(this, 'force')">
+                            <span class="mode-name">💥 FORCE CLOSE</span>
+                            <div class="mode-check" id="m1"></div>
+                        </div>
+                        <div class="mode-item" onclick="selectMode(this, 'delay')">
+                            <span class="mode-name">⏱️ DELAY 50% + AKAN</span>
+                            <div class="mode-check" id="m2"></div>
+                        </div>
+                        <div class="mode-item" onclick="selectMode(this, 'clear')">
+                            <span class="mode-name">✨ NORMAL / CLEAR BUG</span>
+                            <div class="mode-check" id="m3"></div>
+                        </div>
+                        <div class="mode-item" onclick="selectMode(this, 'invisible')">
+                            <span class="mode-name">👻 INVISIBLE TEXT</span>
+                            <div class
